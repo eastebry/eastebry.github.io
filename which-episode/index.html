@@ -1,0 +1,232 @@
+<html>
+    <head>
+        <title>Seinfeld Episode Picker</title>
+    </head>
+
+    <body style='background: black'>
+        <style>
+            a:link {
+                color: white;
+                text-decoration: none;
+            }
+            a:visited {
+                color: white;
+                text-decoration: none;
+            }
+            a:hover {
+                color: white;
+                text-decoration: none;
+            }
+            a:active {
+                color: white;
+                text-decoration: none;
+            } 
+        </style>
+        <h1 id="title" style="font-size: 80; text-align: center; padding-top: 200px; color: white;">Click here!</h1> 
+    </body>
+
+    <script>
+        // A giant list of episodes? Ewwwwww....
+        var episodes = [
+            '<a href="http://en.wikipedia.org/wiki/The_Seinfeld_Chronicles" title="The Seinfeld Chronicles">The Seinfeld Chronicles</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Stake_Out_(Seinfeld)" title="The Stake Out (Seinfeld)">The Stake Out</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Robbery" title="The Robbery">The Robbery</a>',
+            '<a href="http://en.wikipedia.org/wiki/Male_Unbonding" title="Male Unbonding">Male Unbonding</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Stock_Tip" title="The Stock Tip">The Stock Tip</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Ex-Girlfriend" title="The Ex-Girlfriend">The Ex-Girlfriend</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Pony_Remark" title="The Pony Remark">The Pony Remark</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Jacket_(Seinfeld)" title="The Jacket (Seinfeld)">The Jacket</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Phone_Message" title="The Phone Message">The Phone Message</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Apartment_(Seinfeld)" title="The Apartment (Seinfeld)">The Apartment</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Statue_(Seinfeld)" title="The Statue (Seinfeld)">The Statue</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Revenge_(Seinfeld)" title="The Revenge (Seinfeld)">The Revenge</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Heart_Attack" title="The Heart Attack">The Heart Attack</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Deal_(Seinfeld)" title="The Deal (Seinfeld)">The Deal</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Baby_Shower_(Seinfeld)" title="The Baby Shower (Seinfeld)">The Baby Shower</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Chinese_Restaurant" title="The Chinese Restaurant">The Chinese Restaurant</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Busboy" title="The Busboy">The Busboy</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Note_(Seinfeld)" title="The Note (Seinfeld)">The Note</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Truth_(Seinfeld)" title="The Truth (Seinfeld)">The Truth</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Pen" title="The Pen">The Pen</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Dog_(Seinfeld)" title="The Dog (Seinfeld)">The Dog</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Library_(Seinfeld)" title="The Library (Seinfeld)">The Library</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Parking_Garage" title="The Parking Garage">The Parking Garage</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Cafe_(Seinfeld_episode)" title="The Cafe (Seinfeld episode)" class="mw-redirect">The Café</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Tape" title="The Tape">The Tape</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Nose_Job" title="The Nose Job">The Nose Job</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Stranded" title="The Stranded">The Stranded</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Alternate_Side" title="The Alternate Side">The Alternate Side</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Red_Dot" title="The Red Dot">The Red Dot</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Subway_(Seinfeld)" title="The Subway (Seinfeld)">The Subway</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Pez_Dispenser" title="The Pez Dispenser">The Pez Dispenser</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Suicide_(Seinfeld)" title="The Suicide (Seinfeld)">The Suicide</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Fix-Up" title="The Fix-Up">The Fix-Up</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Boyfriend_(Seinfeld)" title="The Boyfriend (Seinfeld)">The Boyfriend, Part 1</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Boyfriend_(Seinfeld)" title="The Boyfriend (Seinfeld)">The Boyfriend, Part 2</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Limo_(Seinfeld)" title="The Limo (Seinfeld)">The Limo</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Good_Samaritan_(Seinfeld)" title="The Good Samaritan (Seinfeld)">The Good Samaritan</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Letter_(Seinfeld)" title="The Letter (Seinfeld)">The Letter</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Parking_Space" title="The Parking Space">The Parking Space</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Keys_(Seinfeld)" title="The Keys (Seinfeld)">The Keys</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Trip_(Seinfeld)" title="The Trip (Seinfeld)">The Trip, Part 1</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Trip_(Seinfeld)" title="The Trip (Seinfeld)">The Trip, Part 2</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Pitch_(Seinfeld)" title="The Pitch (Seinfeld)">The Pitch</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Ticket_(Seinfeld)" title="The Ticket (Seinfeld)">The Ticket</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Wallet" title="The Wallet">The Wallet</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Watch_(Seinfeld)" title="The Watch (Seinfeld)">The Watch</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Bubble_Boy_(Seinfeld)" title="The Bubble Boy (Seinfeld)">The Bubble Boy</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Cheever_Letters" title="The Cheever Letters">The Cheever Letters</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Opera_(Seinfeld)" title="The Opera (Seinfeld)">The Opera</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Virgin_(Seinfeld)" title="The Virgin (Seinfeld)">The Virgin</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Contest" title="The Contest">The Contest</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Airport" title="The Airport">The Airport</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Pick" title="The Pick">The Pick</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Movie" title="The Movie">The Movie</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Visa_(Seinfeld)" title="The Visa (Seinfeld)" class="mw-redirect">The Visa</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Shoes_(Seinfeld)" title="The Shoes (Seinfeld)">The Shoes</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Outing_(Seinfeld)" title="The Outing (Seinfeld)">The Outing</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Old_Man_(Seinfeld)" title="The Old Man (Seinfeld)">The Old Man</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Implant" title="The Implant">The Implant</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Junior_Mint" title="The Junior Mint">The Junior Mint</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Smelly_Car" title="The Smelly Car">The Smelly Car</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Handicap_Spot" title="The Handicap Spot">The Handicap Spot</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Pilot_(Seinfeld)" title="The Pilot (Seinfeld)">The Pilot, Part 1</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Pilot_(Seinfeld)" title="The Pilot (Seinfeld)">The Pilot, Part 2</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Mango" title="The Mango">The Mango</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Puffy_Shirt" title="The Puffy Shirt">The Puffy Shirt</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Glasses" title="The Glasses">The Glasses</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Sniffing_Accountant" title="The Sniffing Accountant">The Sniffing Accountant</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Bris" title="The Bris">The Bris</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Lip_Reader" title="The Lip Reader">The Lip Reader</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Non-Fat_Yogurt" title="The Non-Fat Yogurt">The Non-Fat Yogurt</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Barber_(Seinfeld)" title="The Barber (Seinfeld)">The Barber</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Masseuse_(Seinfeld)" title="The Masseuse (Seinfeld)">The Masseuse</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Cigar_Store_Indian" title="The Cigar Store Indian">The Cigar Store Indian</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Conversion_(Seinfeld)" title="The Conversion (Seinfeld)">The Conversion</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Stall" title="The Stall">The Stall</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Dinner_Party_(Seinfeld)" title="The Dinner Party (Seinfeld)">The Dinner Party</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Marine_Biologist" title="The Marine Biologist">The Marine Biologist</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Pie" title="The Pie">The Pie</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Stand-In" title="The Stand-In" class="mw-redirect">The Stand-In</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Wife" title="The Wife" class="mw-redirect">The Wife</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Raincoats_(Seinfeld)" title="The Raincoats (Seinfeld)">The Raincoats, Part 1</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Raincoats_(Seinfeld)" title="The Raincoats (Seinfeld)">The Raincoats, Part 2</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Fire_(Seinfeld)" title="The Fire (Seinfeld)">The Fire</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Hamptons_(Seinfeld)" title="The Hamptons (Seinfeld)">The Hamptons</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Opposite" title="The Opposite">The Opposite</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Chaperone_(Seinfeld)" title="The Chaperone (Seinfeld)">The Chaperone</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Big_Salad" title="The Big Salad">The Big Salad</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Pledge_Drive" title="The Pledge Drive">The Pledge Drive</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Chinese_Woman" title="The Chinese Woman">The Chinese Woman</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Couch" title="The Couch" class="mw-redirect">The Couch</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Gymnast" title="The Gymnast" class="mw-redirect">The Gymnast</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Soup_(Seinfeld)" title="The Soup (Seinfeld)">The Soup</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Mom_%26_Pop_Store" title="The Mom &amp; Pop Store">The Mom &amp; Pop Store</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Secretary" title="The Secretary">The Secretary</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Race_(Seinfeld)" title="The Race (Seinfeld)">The Race</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Switch_(Seinfeld)" title="The Switch (Seinfeld)">The Switch</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Label_Maker" title="The Label Maker">The Label Maker</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Scofflaw" title="The Scofflaw">The Scofflaw</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Highlights_of_100" title="The Highlights of 100">The Highlights of 100, Part 1</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Highlights_of_100" title="The Highlights of 100">The Highlights of 100, Part 2</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Beard" title="The Beard">The Beard</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Kiss_Hello" title="The Kiss Hello">The Kiss Hello</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Doorman" title="The Doorman">The Doorman</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Jimmy" title="The Jimmy">The Jimmy</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Doodle" title="The Doodle">The Doodle</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Fusilli_Jerry" title="The Fusilli Jerry">The Fusilli Jerry</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Diplomat%27s_Club" title="The Diplomat\'s Club">The Diplomat\'s Club</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Face_Painter" title="The Face Painter">The Face Painter</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Understudy_(Seinfeld)" title="The Understudy (Seinfeld)">The Understudy</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Engagement_(Seinfeld)" title="The Engagement (Seinfeld)">The Engagement</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Postponement" title="The Postponement">The Postponement</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Maestro_(Seinfeld)" title="The Maestro (Seinfeld)">The Maestro</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Wink_(Seinfeld)" title="The Wink (Seinfeld)">The Wink</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Hot_Tub" title="The Hot Tub">The Hot Tub</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Soup_Nazi" title="The Soup Nazi">The Soup Nazi</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Secret_Code_(Seinfeld)" title="The Secret Code (Seinfeld)">The Secret Code</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Pool_Guy" title="The Pool Guy">The Pool Guy</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Sponge" title="The Sponge">The Sponge</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Gum" title="The Gum">The Gum</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Rye" title="The Rye">The Rye</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Caddy_(Seinfeld)" title="The Caddy (Seinfeld)">The Caddy</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Seven" title="The Seven">The Seven</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Cadillac" title="The Cadillac">The Cadillac, Part 1</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Cadillac" title="The Cadillac">The Cadillac, Part 2</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Shower_Head" title="The Shower Head">The Shower Head</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Doll_(Seinfeld)" title="The Doll (Seinfeld)">The Doll</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Friar%27s_Club" title="The Friar\'s Club">The Friars Club</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Wig_Master" title="The Wig Master">The Wig Master</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Calzone" title="The Calzone">The Calzone</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Bottle_Deposit" title="The Bottle Deposit">The Bottle Deposit, Part 1</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Bottle_Deposit" title="The Bottle Deposit">The Bottle Deposit, Part 2</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Wait_Out" title="The Wait Out">The Wait Out</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Invitations" title="The Invitations">The Invitations</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Foundation_(Seinfeld)" title="The Foundation (Seinfeld)">The Foundation</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Soul_Mate" title="The Soul Mate">The Soul Mate</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Bizarro_Jerry" title="The Bizarro Jerry">The Bizarro Jerry</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Little_Kicks" title="The Little Kicks">The Little Kicks</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Package_(Seinfeld)" title="The Package (Seinfeld)">The Package</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Fatigues" title="The Fatigues">The Fatigues</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Checks" title="The Checks">The Checks</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Chicken_Roaster" title="The Chicken Roaster">The Chicken Roaster</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Abstinence" title="The Abstinence">The Abstinence</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Andrea_Doria" title="The Andrea Doria" class="mw-redirect">The Andrea Doria</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Little_Jerry" title="The Little Jerry">The Little Jerry</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Money" title="The Money">The Money</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Comeback_(Seinfeld)" title="The Comeback (Seinfeld)">The Comeback</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Van_Buren_Boys" title="The Van Buren Boys">The Van Buren Boys</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Susie" title="The Susie">The Susie</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Pothole" title="The Pothole">The Pothole</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_English_Patient_(Seinfeld)" title="The English Patient (Seinfeld)">The English Patient</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Nap" title="The Nap">The Nap</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Yada_Yada" title="The Yada Yada">The Yada Yada</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Millennium_(Seinfeld)" title="The Millennium (Seinfeld)">The Millennium</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Muffin_Tops" title="The Muffin Tops">The Muffin Tops</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Summer_of_George" title="The Summer of George">The Summer of George</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Butter_Shave" title="The Butter Shave">The Butter Shave</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Voice_(Seinfeld)" title="The Voice (Seinfeld)">The Voice</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Serenity_Now" title="The Serenity Now">The Serenity Now</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Blood_(Seinfeld)" title="The Blood (Seinfeld)">The Blood</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Junk_Mail" title="The Junk Mail">The Junk Mail</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Merv_Griffin_Show_(Seinfeld)" title="The Merv Griffin Show (Seinfeld)">The Merv Griffin Show</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Slicer" title="The Slicer">The Slicer</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Betrayal" title="The Betrayal" class="mw-redirect">The Betrayal</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Apology_(Seinfeld)" title="The Apology (Seinfeld)">The Apology</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Strike_(Seinfeld)" title="The Strike (Seinfeld)">The Strike</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Dealership" title="The Dealership">The Dealership</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Reverse_Peephole" title="The Reverse Peephole">The Reverse Peephole</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Cartoon" title="The Cartoon">The Cartoon</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Strong_Box" title="The Strong Box">The Strong Box</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Wizard_(Seinfeld)" title="The Wizard (Seinfeld)">The Wizard</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Burning_(Seinfeld)" title="The Burning (Seinfeld)">The Burning</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Bookstore" title="The Bookstore">The Bookstore</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Frogger" title="The Frogger">The Frogger</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Maid_(Seinfeld)" title="The Maid (Seinfeld)">The Maid</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Puerto_Rican_Day" title="The Puerto Rican Day">The Puerto Rican Day</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Chronicle_(Seinfeld)" title="The Chronicle (Seinfeld)">The Chronicle, Part 1</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Chronicle_(Seinfeld)" title="The Chronicle (Seinfeld)">The Chronicle, Part 2</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Finale_(Seinfeld)" title="The Finale (Seinfeld)">The Finale, Part 1</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Finale_(Seinfeld)" title="The Finale (Seinfeld)">The Finale, Part 2</a>',
+            '<a href="http://en.wikipedia.org/wiki/The_Finale_(Seinfeld)" title="The Finale (Seinfeld)">The Finale, Part 2</a>']
+        var index = 0;
+        var speed = 500;
+        var decel = 1;
+        function changeEpisode(){
+            index = (index + 1) % episodes.length
+            document.getElementById('title').innerHTML = episodes[index];
+            speed -= decel;
+            if (speed > 1){
+                setTimeout(changeEpisode, 1/speed * 1000);
+            }
+            else{
+                setTimeout(function(){window.location = document.getElementById('title').firstChild.getAttribute('href');}, 1200);
+            }     
+        }
+         
+        document.getElementById('title').onclick = function(){
+            index = Math.floor(Math.random() * episodes.length); 
+            setTimeout(changeEpisode, 1/speed);
+        }; 
+    </script>
+</html>
