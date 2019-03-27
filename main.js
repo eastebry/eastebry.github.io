@@ -16,9 +16,8 @@ $(document).ready(function(){
           clearInterval(interval);
       }, 100);
     }
-    var offsetX = (event.pageX/screen.width)*50;
-    var offsetY = (event.pageY/screen.height)*100;
-    var initialX = (screen.width/4);
+    var offsetX = (event.pageX/screen.width)*1000;
+    var initialX = (screen.width);
     for (var i=0; i<5; i++){
       $("#bg-" + i).css('left', offsetX/(Math.pow(i+1,2)) - initialX);;
     }
