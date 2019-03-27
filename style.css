@@ -28,8 +28,11 @@ body {
   opacity: 0;
 }
 
-.profile {
+.circle {
   border-radius: 50%;
+}
+.profile {
+    text-align: center;
 }
 
 .left {
