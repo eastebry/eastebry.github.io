@@ -1,8 +1,7 @@
 body {
   padding: 0px;
   margin: 0px;
-  background-image: url('5.png');
-  /*background-color: #ab6a8c*/;
+  background-color: #eef1f4;
 }
 
 #main {
@@ -11,6 +10,13 @@ body {
   margin: auto;
   padding: 20px;
   font-family: 'Muli', sans-serif;
+  background-color: #eef1f4bb;
+  border-radius: 10px;
+}
+
+a {
+  color: #004466;
+  text-decoration: underline;
 }
 
 .bg-img {
@@ -42,6 +48,11 @@ body {
 
 .mt-40 {
   margin-top: 40px;
+}
+
+.m-20 {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 #bg-0 {

@@ -1,3 +1,9 @@
+var imagesLoaded = false;
+
+$(window).on("load", function() {
+  imagesLoaded = true;
+});
+
 $(document).ready(function(){
   var offset = (screen.width/2);
   var initial = (screen.width/4);
@@ -8,6 +14,9 @@ $(document).ready(function(){
   }
   $("body").mousemove(function( event ) {
     var interval;
+    if (!imagesLoaded) {
+      return
+    }
     if (opacity == 0){
       interval = setInterval(function(){ 
         opacity += .01
