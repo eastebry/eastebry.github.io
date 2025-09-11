@@ -4,7 +4,11 @@ title = 'Bryan Eastes'
 theme = 'typo'
 
 # Google analytics code
-googleAnalytics = "G-xxxxxxxxx"
+#googleAnalytics = "G-xxxxxxxxx"
+
+[caches]
+  [caches.images]
+      dir = ':cacheDir/images'
 
 [taxonomies]
 tag = 'tags'
