@@ -1,9 +1,3 @@
-[submodule "3d_fun"]
-	path = 3d_fun
-	url = https://github.com/eastebry/3d_fun.git
-[submodule "cappy-flopter"]
-	path = cappy-flopter
-	url = https://github.com/eastebry/cappy-flopter.git
-[submodule "dont-update"]
-	path = dont-update
-	url = https://github.com/eastebry/dont-update.git
+[submodule "themes/typo"]
+	path = themes/typo
+	url = https://github.com/eastebry/typo.git
