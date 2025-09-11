@@ -29,8 +29,8 @@ Outside of work, I try to spend as much time as possible with my laptop closed a
 """
 
 # Collection to display on home
-homeCollectionTitle = 'Posts'
-homeCollection = 'posts'
+#homeCollectionTitle = 'Posts'
+#homeCollection = 'posts'
 
 # Lists parameters
 paginationSize = 100
@@ -53,17 +53,17 @@ name = "github"
 url = "https://github.com/eastebry"
 
 # Main menu pages
-[[params.menu]]
-name = "home"
-url = "/"
+#[[params.menu]]
+#name = "home"
+#url = "/"
 
-[[params.menu]]
-name = "posts"
-url = "/posts"
+#[[aparams.menu]]
+#name = "posts"
+#url = "/posts"
 
-[[params.menu]]
-name = "about"
-url = "/about"
+#[[params.menu]]
+#name = "about"
+#url = "/about"
 
 # Syntax highlight on code blocks
 [markup]
