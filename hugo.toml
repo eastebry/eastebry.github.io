@@ -23,7 +23,7 @@ colorPalette = 'default'
 hideHeader = false
 
 # Intro on main page, content is markdown
-homeIntroTitle = 'About'
+homeIntroTitle = 'About Me'
 homeIntroContent = """
 I'm a security engineer living in the Pacific Northwest. I have ten years of industry experience in information security - from application security to incident response.
 
@@ -43,7 +43,7 @@ listDateFormat = '2 Jan 2006'
 
 # Breadcrumbs
 [params.breadcrumbs]
-enabled = true
+enabled = false
 showCurrentPage = true
 home = "Home"
 
@@ -57,13 +57,13 @@ name = "github"
 url = "https://github.com/eastebry"
 
 # Main menu pages
-#[[params.menu]]
-#name = "home"
-#url = "/"
+[[params.menu]]
+name = "home"
+url = "/"
 
-#[[aparams.menu]]
-#name = "posts"
-#url = "/posts"
+[[params.menu]]
+name = "posts"
+url = "/posts"
 
 #[[params.menu]]
 #name = "about"
