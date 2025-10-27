@@ -25,9 +25,9 @@ hideHeader = false
 # Intro on main page, content is markdown
 homeIntroTitle = 'About Me'
 homeIntroContent = """
-I'm a security engineer living in the Pacific Northwest. I have ten years of industry experience in information security - from application security to incident response.
+I'm a security engineer living in the Pacific Northwest. I've worked in a variety of different security domains including application security, detection and response, malware analysis, and infrastructure security.
 
-Currently I work as a manager on the product security team at HashiCorp.
+I love puzzles, and used to participate in a lot of CTF competitions. I also helped organize a few - working on both the infrastructure and the challenges.
 
 Outside of work, I try to spend as much time as possible with my laptop closed and my feet in the mountains.
 """
