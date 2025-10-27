@@ -4,7 +4,7 @@ title = 'Bryan Eastes'
 theme = 'typo'
 
 # Google analytics code
-#googleAnalytics = "G-xxxxxxxxx"
+googleAnalytics = "G-ESLFSLHE2B"
 
 [caches]
   [caches.images]
