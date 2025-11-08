@@ -1,0 +1,7 @@
+.code-wrap pre{
+      white-space: pre-wrap;
+}
+
+code {
+    font-family: monospace;
+}

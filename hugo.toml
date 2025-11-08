@@ -72,7 +72,10 @@ url = "/posts"
 # Syntax highlight on code blocks
 [markup]
 [markup.highlight]
-style = 'algol'
+  #noClasses = false        # Use CSS classes instead of inline styles
+  style = "github"
+  #lineNos = true           # Show line numbers
+  #lineNumbersInTable = true
 
 # Giscus comments
 [params.giscus]
