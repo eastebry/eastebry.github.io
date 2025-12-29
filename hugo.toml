@@ -18,7 +18,7 @@ tag = 'tags'
 description = "Bryan's personal site"
 
 # Appearance settings
-theme = 'auto'
+theme = 'light'
 colorPalette = 'default'
 hideHeader = false
 
