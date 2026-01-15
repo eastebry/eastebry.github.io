@@ -1,7 +1,7 @@
 baseURL = 'eastebry.github.io'
 languageCode = 'en-us'
 title = 'Bryan Eastes'
-theme = 'typo'
+theme = ['typo', 'hugo-notice']
 
 # Google analytics code
 #googleAnalytics = "G-xxxxxxxxx"
