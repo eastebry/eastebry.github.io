@@ -102,6 +102,7 @@
       justify-content: center;
       padding: 8px;
       touch-action: manipulation;
+      overflow: hidden;
     }
 
     .card.selected { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25) inset; }
@@ -127,6 +128,11 @@
 
     .grid.portrait-cards .symbols {
       gap: 2px;
+    }
+
+    .grid.landscape-cards .symbols {
+      transform: rotate(90deg);
+      transform-origin: center;
     }
 
     .msg {
@@ -298,6 +304,7 @@
       boardEl.style.setProperty('--card-w', `${Math.floor(best.fittedWidth)}px`);
       boardEl.style.setProperty('--card-h', `${Math.floor(best.fittedHeight)}px`);
       boardEl.classList.toggle('portrait-cards', best.ratio === 'portrait');
+      boardEl.classList.toggle('landscape-cards', best.ratio === 'landscape');
     }
 
     function clearPickStyles(cls) {
