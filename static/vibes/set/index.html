@@ -27,11 +27,14 @@
     }
 
     .app {
-      max-width: 900px;
+      width: min(100%, 1000px);
       margin: 0 auto;
       padding: 12px;
       display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
       gap: 12px;
+      height: 100svh;
+      overflow: hidden;
     }
 
     .toolbar {
@@ -74,8 +77,17 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+      --grid-gap: 8px;
+      --cols: 3;
+      --card-w: 120px;
+      --card-h: 200px;
+      gap: var(--grid-gap);
+      grid-template-columns: repeat(var(--cols), minmax(0, var(--card-w)));
+      grid-auto-rows: var(--card-h);
+      min-height: 0;
+      align-content: center;
+      justify-content: center;
+      overflow: hidden;
     }
 
     .card {
@@ -83,7 +95,8 @@
       background: var(--card);
       color: var(--ink);
       border-radius: 12px;
-      min-height: 116px;
+      width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -105,16 +118,23 @@
       flex-direction: column;
     }
 
+    .symbols svg {
+      width: 100%;
+      max-width: 100px;
+      height: auto;
+      flex: 0 1 auto;
+    }
+
+    .grid.portrait-cards .symbols {
+      gap: 2px;
+    }
+
     .msg {
       min-height: 1.2em;
       font-size: 0.95rem;
       color: var(--muted);
     }
 
-    @media (min-width: 700px) {
-      .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-      .card { min-height: 130px; }
-    }
   </style>
 </head>
 <body>
@@ -208,7 +228,7 @@
       if (shape === 'oval') d = 'M12 20 Q12 8 24 8 H76 Q88 8 88 20 Q88 32 76 32 H24 Q12 32 12 20Z';
       if (shape === 'diamond') d = 'M50 7 L88 20 L50 33 L12 20 Z';
       if (shape === 'squiggle') d = 'M50 4 L61 14 L74 14 L64 22 L68 35 L50 27 L32 35 L36 22 L26 14 L39 14 Z';
-      return `<svg viewBox="0 0 100 40" width="92" height="42" aria-hidden="true"><defs>${stripe}</defs><path d="${d}" fill="${fillValue}" stroke="${color}" stroke-width="3" /></svg>`;
+      return `<svg viewBox="0 0 100 40" aria-hidden="true"><defs>${stripe}</defs><path d="${d}" fill="${fillValue}" stroke="${color}" stroke-width="3" /></svg>`;
     }
 
     function cardMarkup(card) {
@@ -242,6 +262,42 @@
         boardEl.appendChild(btn);
       });
       refreshHUD();
+      requestAnimationFrame(updateBoardLayout);
+    }
+
+    function updateBoardLayout() {
+      const cardCount = Math.max(board.length, 1);
+      const rect = boardEl.getBoundingClientRect();
+      const gridGap = 8;
+      const maxCols = Math.min(7, cardCount);
+      const ratios = [
+        { name: 'landscape', value: 5 / 3 },
+        { name: 'portrait', value: 3 / 5 }
+      ];
+      let best = null;
+
+      for (let cols = 3; cols <= maxCols; cols++) {
+        const rows = Math.ceil(cardCount / cols);
+        const slotWidth = (rect.width - gridGap * (cols - 1)) / cols;
+        const slotHeight = (rect.height - gridGap * (rows - 1)) / rows;
+        if (slotWidth <= 0 || slotHeight <= 0) continue;
+
+        for (const ratio of ratios) {
+          const fittedWidth = Math.min(slotWidth, slotHeight * ratio.value);
+          const fittedHeight = fittedWidth / ratio.value;
+          const area = fittedWidth * fittedHeight;
+          if (!best || area > best.area) {
+            best = { cols, fittedWidth, fittedHeight, area, ratio: ratio.name };
+          }
+        }
+      }
+
+      if (!best) return;
+
+      boardEl.style.setProperty('--cols', best.cols);
+      boardEl.style.setProperty('--card-w', `${Math.floor(best.fittedWidth)}px`);
+      boardEl.style.setProperty('--card-h', `${Math.floor(best.fittedHeight)}px`);
+      boardEl.classList.toggle('portrait-cards', best.ratio === 'portrait');
     }
 
     function clearPickStyles(cls) {
@@ -332,6 +388,7 @@
     document.getElementById('dealBtn').addEventListener('click', addCards);
     document.getElementById('hintBtn').addEventListener('click', hint);
     document.getElementById('newBtn').addEventListener('click', resetGame);
+    window.addEventListener('resize', updateBoardLayout);
 
     resetGame();
   </script>
