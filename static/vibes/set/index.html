@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Set</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #111827;
+      --panel: #1f2937;
+      --card: #f8fafc;
+      --ink: #0f172a;
+      --ok: #10b981;
+      --bad: #ef4444;
+      --muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(180deg, #0f172a, var(--bg));
+      color: #e2e8f0;
+      min-height: 100svh;
+    }
+
+    .app {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .toolbar {
+      background: rgba(31, 41, 55, 0.9);
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 0.95rem;
+      font-weight: 650;
+      min-height: 44px;
+    }
+
+    button:active { transform: translateY(1px); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .card {
+      border: 3px solid transparent;
+      background: var(--card);
+      color: var(--ink);
+      border-radius: 12px;
+      min-height: 116px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      touch-action: manipulation;
+    }
+
+    .card.selected { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25) inset; }
+    .card.good { border-color: var(--ok); }
+    .card.bad { border-color: var(--bad); }
+
+    .symbols {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      gap: 4px;
+      flex-wrap: nowrap;
+      flex-direction: column;
+    }
+
+    .msg {
+      min-height: 1.2em;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    @media (min-width: 700px) {
+      .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .card { min-height: 130px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="toolbar">
+      <div class="stats">
+        <span id="setsFound">Sets: 0</span>
+        <span id="cardsLeft">Deck: 81</span>
+        <span id="time">Time: 0s</span>
+      </div>
+      <div class="controls">
+        <button id="dealBtn" type="button">Add 3 cards</button>
+        <button id="hintBtn" type="button">Hint</button>
+        <button id="newBtn" type="button">New game</button>
+      </div>
+      <div id="message" class="msg" aria-live="polite"></div>
+    </section>
+    <section id="board" class="grid" aria-label="Set board"></section>
+  </main>
+
+  <script>
+    const COLORS = ['#e11d48', '#16a34a', '#7c3aed'];
+    const SHAPES = ['oval', 'diamond', 'squiggle'];
+    const FILLS = ['solid', 'striped', 'open'];
+
+    let deck = [];
+    let board = [];
+    let selected = [];
+    let setsFound = 0;
+    let startedAt = 0;
+    let timer = null;
+
+    const boardEl = document.getElementById('board');
+    const msgEl = document.getElementById('message');
+    const setsEl = document.getElementById('setsFound');
+    const cardsLeftEl = document.getElementById('cardsLeft');
+    const timeEl = document.getElementById('time');
+
+    function buildDeck() {
+      const cards = [];
+      for (let number = 0; number < 3; number++) {
+        for (let color = 0; color < 3; color++) {
+          for (let shape = 0; shape < 3; shape++) {
+            for (let fill = 0; fill < 3; fill++) {
+              cards.push({ number, color, shape, fill, id: `${number}${color}${shape}${fill}` });
+            }
+          }
+        }
+      }
+      return shuffle(cards);
+    }
+
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function deal(n) {
+      for (let i = 0; i < n && deck.length > 0; i++) {
+        board.push(deck.pop());
+      }
+    }
+
+    function isSet(a, b, c) {
+      const keys = ['number', 'color', 'shape', 'fill'];
+      return keys.every((k) => {
+        const vals = new Set([a[k], b[k], c[k]]);
+        return vals.size === 1 || vals.size === 3;
+      });
+    }
+
+    function findAnySet() {
+      for (let i = 0; i < board.length; i++) {
+        for (let j = i + 1; j < board.length; j++) {
+          for (let k = j + 1; k < board.length; k++) {
+            if (isSet(board[i], board[j], board[k])) return [i, j, k];
+          }
+        }
+      }
+      return null;
+    }
+
+    function shapeMarkup(shape, fill, color) {
+      const stripe = `<pattern id="p-${color.slice(1)}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><line x1="0" y1="0" x2="0" y2="6" stroke="${color}" stroke-width="2" /></pattern>`;
+      const fillValue = fill === 'solid' ? color : fill === 'open' ? 'transparent' : `url(#p-${color.slice(1)})`;
+      let d = '';
+      if (shape === 'oval') d = 'M12 20 Q12 8 24 8 H76 Q88 8 88 20 Q88 32 76 32 H24 Q12 32 12 20Z';
+      if (shape === 'diamond') d = 'M50 7 L88 20 L50 33 L12 20 Z';
+      if (shape === 'squiggle') d = 'M50 4 L61 14 L74 14 L64 22 L68 35 L50 27 L32 35 L36 22 L26 14 L39 14 Z';
+      return `<svg viewBox="0 0 100 40" width="92" height="42" aria-hidden="true"><defs>${stripe}</defs><path d="${d}" fill="${fillValue}" stroke="${color}" stroke-width="3" /></svg>`;
+    }
+
+    function cardMarkup(card) {
+      const count = card.number + 1;
+      const color = COLORS[card.color];
+      const shape = SHAPES[card.shape];
+      const fill = FILLS[card.fill];
+      const symbols = new Array(count).fill(0).map(() => shapeMarkup(shape, fill, color)).join('');
+      return `<div class="symbols">${symbols}</div>`;
+    }
+
+    function showMessage(text) {
+      msgEl.textContent = text;
+    }
+
+    function refreshHUD() {
+      setsEl.textContent = `Sets: ${setsFound}`;
+      cardsLeftEl.textContent = `Deck: ${deck.length}`;
+    }
+
+    function render() {
+      boardEl.innerHTML = '';
+      board.forEach((card, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'card';
+        btn.setAttribute('aria-label', `Card ${idx + 1}`);
+        btn.innerHTML = cardMarkup(card);
+        if (selected.includes(idx)) btn.classList.add('selected');
+        btn.addEventListener('click', () => pickCard(idx));
+        boardEl.appendChild(btn);
+      });
+      refreshHUD();
+    }
+
+    function clearPickStyles(cls) {
+      selected.forEach((i) => {
+        const el = boardEl.children[i];
+        if (el) {
+          el.classList.remove('selected');
+          el.classList.add(cls);
+        }
+      });
+      setTimeout(() => render(), 360);
+    }
+
+    function pickCard(idx) {
+      const pos = selected.indexOf(idx);
+      if (pos >= 0) {
+        selected.splice(pos, 1);
+        render();
+        return;
+      }
+      if (selected.length === 3) return;
+      selected.push(idx);
+      render();
+      if (selected.length !== 3) return;
+      const [a, b, c] = selected.map((i) => board[i]);
+      if (isSet(a, b, c)) {
+        clearPickStyles('good');
+        const toRemove = [...selected].sort((x, y) => y - x);
+        toRemove.forEach((i) => board.splice(i, 1));
+        setsFound += 1;
+        selected = [];
+        if (board.length < 12) deal(12 - board.length);
+        while (board.length && !findAnySet() && deck.length > 0) {
+          deal(3);
+        }
+        if (!findAnySet() && deck.length === 0) {
+          showMessage('Game over — no sets left.');
+        } else {
+          showMessage('Nice set!');
+        }
+        render();
+      } else {
+        showMessage('Not a set.');
+        clearPickStyles('bad');
+        selected = [];
+      }
+    }
+
+    function addCards() {
+      if (deck.length === 0) {
+        showMessage('Deck is empty.');
+        return;
+      }
+      deal(3);
+      render();
+    }
+
+    function hint() {
+      const found = findAnySet();
+      if (!found) {
+        showMessage('No sets on board. Add cards.');
+        return;
+      }
+      selected = [found[0]];
+      render();
+      showMessage('Hint: one card is highlighted.');
+    }
+
+    function resetGame() {
+      deck = buildDeck();
+      board = [];
+      selected = [];
+      setsFound = 0;
+      startedAt = Date.now();
+      deal(12);
+      while (!findAnySet() && deck.length > 0) {
+        deal(3);
+      }
+      showMessage('Find a set: all same or all different for each trait.');
+      render();
+      if (timer) clearInterval(timer);
+      timer = setInterval(() => {
+        const sec = Math.floor((Date.now() - startedAt) / 1000);
+        timeEl.textContent = `Time: ${sec}s`;
+      }, 1000);
+    }
+
+    document.getElementById('dealBtn').addEventListener('click', addCards);
+    document.getElementById('hintBtn').addEventListener('click', hint);
+    document.getElementById('newBtn').addEventListener('click', resetGame);
+
+    resetGame();
+  </script>
+</body>
+</html>
