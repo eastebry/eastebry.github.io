@@ -120,8 +120,7 @@
     }
 
     .symbols svg {
-      width: 100%;
-      max-width: 100px;
+      width: min(100%, var(--symbol-max, 100px));
       height: auto;
       flex: 0 1 auto;
     }
@@ -303,6 +302,8 @@
       boardEl.style.setProperty('--cols', best.cols);
       boardEl.style.setProperty('--card-w', `${Math.floor(best.fittedWidth)}px`);
       boardEl.style.setProperty('--card-h', `${Math.floor(best.fittedHeight)}px`);
+      const symbolMax = Math.max(36, Math.floor(Math.min(best.fittedWidth, best.fittedHeight) * 0.72));
+      boardEl.style.setProperty('--symbol-max', `${symbolMax}px`);
       boardEl.classList.toggle('portrait-cards', best.ratio === 'portrait');
       boardEl.classList.toggle('landscape-cards', best.ratio === 'landscape');
     }
