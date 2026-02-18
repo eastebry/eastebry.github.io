@@ -35,36 +35,6 @@
       gap: 12px;
       height: 100svh;
       overflow: hidden;
-      position: relative;
-    }
-
-    .screen {
-      background: rgba(31, 41, 55, 0.9);
-      border: 1px solid #334155;
-      border-radius: 14px;
-      padding: 18px;
-    }
-
-    .screen h1, .screen h2 {
-      margin: 0 0 10px;
-    }
-
-    .screen p {
-      margin: 0 0 16px;
-      color: var(--muted);
-    }
-
-    .hidden { display: none !important; }
-
-    .setup-buttons {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .setup-buttons button {
-      min-height: 58px;
-      font-size: 1.05rem;
     }
 
     .toolbar {
@@ -85,20 +55,6 @@
       color: var(--muted);
     }
 
-    .score-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .player-pill {
-      border: 1px solid #475569;
-      border-radius: 999px;
-      padding: 5px 10px;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-
     .controls {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -115,22 +71,9 @@
       font-size: 0.95rem;
       font-weight: 650;
       min-height: 44px;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.55;
     }
 
     button:active { transform: translateY(1px); }
-
-    .board-wrap {
-      position: relative;
-      min-height: 0;
-      overflow: hidden;
-      border-radius: 14px;
-    }
 
     .grid {
       display: grid;
@@ -145,7 +88,6 @@
       align-content: center;
       justify-content: center;
       overflow: hidden;
-      height: 100%;
     }
 
     .card {
@@ -183,7 +125,9 @@
       flex: 0 1 auto;
     }
 
-    .grid.portrait-cards .symbols { gap: 2px; }
+    .grid.portrait-cards .symbols {
+      gap: 2px;
+    }
 
     .grid.landscape-cards .symbols {
       transform: rotate(90deg);
@@ -196,128 +140,30 @@
       color: var(--muted);
     }
 
-    .claim-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.78);
-      border: 1px solid #334155;
-      border-radius: 14px;
-      pointer-events: none;
-    }
-
-    .claim-hint {
-      position: absolute;
-      inset: auto 50% 50% auto;
-      transform: translate(50%, 50%);
-      text-align: center;
-      font-size: 1rem;
-      color: #e2e8f0;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid #475569;
-      border-radius: 12px;
-      padding: 10px 12px;
-      max-width: min(320px, 80%);
-    }
-
-    .claim-button {
-      position: absolute;
-      pointer-events: auto;
-      border: 2px solid currentColor;
-      background: rgba(15, 23, 42, 0.45);
-      color: var(--claim-color);
-      box-shadow: 0 0 20px color-mix(in srgb, var(--claim-color) 75%, transparent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      z-index: 2;
-    }
-
-    .claim-button.side {
-      width: 62px;
-      height: 100%;
-      border-radius: 14px;
-      font-size: 0.9rem;
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
-    }
-
-    .claim-button.left { left: 0; top: 0; }
-    .claim-button.right { right: 0; top: 0; writing-mode: vertical-lr; }
-
-    .claim-button.corner {
-      width: 100px;
-      height: 80px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      line-height: 1.1;
-      padding: 4px;
-    }
-
-    .claim-button.top-left { top: 0; left: 0; }
-    .claim-button.top-right { top: 0; right: 0; }
-    .claim-button.bottom-left { bottom: 0; left: 0; }
-    .claim-button.bottom-right { bottom: 0; right: 0; }
-
-    .winner {
-      font-size: 1.05rem;
-      margin: 10px 0 14px;
-    }
-
-    .final-scores {
-      display: grid;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
   </style>
 </head>
 <body>
   <main class="app">
-    <section id="setupScreen" class="screen">
-      <h1>Set Multiplayer</h1>
-      <p>Select how many players are playing.</p>
-      <div class="setup-buttons">
-        <button type="button" data-player-count="1">1 Player</button>
-        <button type="button" data-player-count="2">2 Players</button>
-        <button type="button" data-player-count="3">3 Players</button>
-        <button type="button" data-player-count="4">4 Players</button>
+    <section class="toolbar">
+      <div class="stats">
+        <span id="setsFound">Sets: 0</span>
+        <span id="cardsLeft">Deck: 81</span>
+        <span id="time">Time: 0s</span>
       </div>
+      <div class="controls">
+        <button id="dealBtn" type="button">Add 3 cards</button>
+        <button id="hintBtn" type="button">Hint</button>
+        <button id="newBtn" type="button">New game</button>
+      </div>
+      <div id="message" class="msg" aria-live="polite"></div>
     </section>
-
-    <section id="gameScreen" class="hidden" aria-live="polite">
-      <section class="toolbar">
-        <div class="stats">
-          <span id="setsFound">Sets: 0</span>
-          <span id="cardsLeft">Deck: 81</span>
-          <span id="time">Time: 0s</span>
-        </div>
-        <div id="scores" class="score-row"></div>
-        <div class="controls">
-          <button id="dealBtn" type="button">Add 3 cards</button>
-          <button id="hintBtn" type="button">Hint</button>
-          <button id="newBtn" type="button">New game</button>
-        </div>
-        <div id="message" class="msg"></div>
-      </section>
-      <section id="boardWrap" class="board-wrap">
-        <section id="board" class="grid" aria-label="Set board"></section>
-        <section id="claimOverlay" class="claim-overlay hidden" aria-label="Claim set point"></section>
-      </section>
-    </section>
-
-    <section id="endScreen" class="screen hidden">
-      <h2>Game over</h2>
-      <p id="winnerText" class="winner"></p>
-      <div id="finalScores" class="final-scores"></div>
-      <button id="playAgainBtn" type="button">Play again</button>
-    </section>
+    <section id="board" class="grid" aria-label="Set board"></section>
   </main>
 
   <script>
     const COLORS = ['#e11d48', '#16a34a', '#7c3aed'];
     const SHAPES = ['oval', 'diamond', 'squiggle'];
     const FILLS = ['solid', 'striped', 'open'];
-    const PLAYER_COLORS = ['#38bdf8', '#f97316', '#a3e635', '#f472b6'];
 
     let deck = [];
     let board = [];
@@ -326,25 +172,11 @@
     let startedAt = 0;
     let timer = null;
 
-    let players = [];
-    let playerCount = 0;
-    let phase = 'setup';
-    let pendingGameOver = false;
-
     const boardEl = document.getElementById('board');
-    const boardWrapEl = document.getElementById('boardWrap');
-    const claimOverlayEl = document.getElementById('claimOverlay');
     const msgEl = document.getElementById('message');
     const setsEl = document.getElementById('setsFound');
     const cardsLeftEl = document.getElementById('cardsLeft');
     const timeEl = document.getElementById('time');
-    const scoresEl = document.getElementById('scores');
-    const winnerTextEl = document.getElementById('winnerText');
-    const finalScoresEl = document.getElementById('finalScores');
-
-    const setupScreenEl = document.getElementById('setupScreen');
-    const gameScreenEl = document.getElementById('gameScreen');
-    const endScreenEl = document.getElementById('endScreen');
 
     function buildDeck() {
       const cards = [];
@@ -420,15 +252,6 @@
     function refreshHUD() {
       setsEl.textContent = `Sets: ${setsFound}`;
       cardsLeftEl.textContent = `Deck: ${deck.length}`;
-      scoresEl.innerHTML = '';
-      players.forEach((player) => {
-        const pill = document.createElement('div');
-        pill.className = 'player-pill';
-        pill.style.borderColor = player.color;
-        pill.style.color = player.color;
-        pill.textContent = `${player.name}: ${player.score}`;
-        scoresEl.appendChild(pill);
-      });
     }
 
     function render() {
@@ -443,16 +266,8 @@
         btn.addEventListener('click', () => pickCard(idx));
         boardEl.appendChild(btn);
       });
-      renderClaimTargets();
       refreshHUD();
-      updateControls();
       requestAnimationFrame(updateBoardLayout);
-    }
-
-    function updateControls() {
-      const picking = phase === 'playing';
-      document.getElementById('dealBtn').disabled = !picking;
-      document.getElementById('hintBtn').disabled = !picking;
     }
 
     function updateBoardLayout() {
@@ -460,7 +275,10 @@
       const rect = boardEl.getBoundingClientRect();
       const gridGap = 8;
       const maxCols = Math.min(7, cardCount);
-      const ratios = [{ name: 'landscape', value: 5 / 3 }, { name: 'portrait', value: 3 / 5 }];
+      const ratios = [
+        { name: 'landscape', value: 5 / 3 },
+        { name: 'portrait', value: 3 / 5 }
+      ];
       let best = null;
 
       for (let cols = 3; cols <= maxCols; cols++) {
@@ -501,21 +319,7 @@
       setTimeout(() => render(), 360);
     }
 
-    function processBoardAfterSet() {
-      const toRemove = [...selected].sort((x, y) => y - x);
-      toRemove.forEach((i) => board.splice(i, 1));
-      setsFound += 1;
-      selected = [];
-      if (board.length < 12) deal(12 - board.length);
-      while (board.length && !findAnySet() && deck.length > 0) {
-        deal(3);
-      }
-      pendingGameOver = !findAnySet() && deck.length === 0;
-    }
-
     function pickCard(idx) {
-      if (phase !== 'playing') return;
-
       const pos = selected.indexOf(idx);
       if (pos >= 0) {
         selected.splice(pos, 1);
@@ -526,35 +330,31 @@
       selected.push(idx);
       render();
       if (selected.length !== 3) return;
-
       const [a, b, c] = selected.map((i) => board[i]);
       if (isSet(a, b, c)) {
         clearPickStyles('good');
-        processBoardAfterSet();
-        if (playerCount === 1) {
-          players[0].score += 1;
-          if (pendingGameOver) {
-            endGame();
-            return;
-          }
-          showMessage('Nice set! Point to Player 1.');
-          render();
-          return;
+        const toRemove = [...selected].sort((x, y) => y - x);
+        toRemove.forEach((i) => board.splice(i, 1));
+        setsFound += 1;
+        selected = [];
+        if (board.length < 12) deal(12 - board.length);
+        while (board.length && !findAnySet() && deck.length > 0) {
+          deal(3);
         }
-
-        phase = 'claiming';
-        showMessage('Set found! Tap your glowing side/corner to claim the point.');
+        if (!findAnySet() && deck.length === 0) {
+          showMessage('Game over — no sets left.');
+        } else {
+          showMessage('Nice set!');
+        }
         render();
-        return;
+      } else {
+        showMessage('Not a set.');
+        clearPickStyles('bad');
+        selected = [];
       }
-
-      showMessage('Not a set.');
-      clearPickStyles('bad');
-      selected = [];
     }
 
     function addCards() {
-      if (phase !== 'playing') return;
       if (deck.length === 0) {
         showMessage('Deck is empty.');
         return;
@@ -564,7 +364,6 @@
     }
 
     function hint() {
-      if (phase !== 'playing') return;
       const found = findAnySet();
       if (!found) {
         showMessage('No sets on board. Add cards.');
@@ -575,106 +374,18 @@
       showMessage('Hint: one card is highlighted.');
     }
 
-    function createPlayers(count) {
-      const roleMap = {
-        2: ['left', 'right'],
-        3: ['top-left', 'top-right', 'bottom-left'],
-        4: ['top-left', 'top-right', 'bottom-left', 'bottom-right']
-      };
-      return new Array(count).fill(0).map((_, index) => ({
-        id: index + 1,
-        name: `Player ${index + 1}`,
-        color: PLAYER_COLORS[index],
-        score: 0,
-        role: roleMap[count]?.[index] || 'solo'
-      }));
-    }
-
-    function renderClaimTargets() {
-      claimOverlayEl.innerHTML = '';
-      const claiming = phase === 'claiming';
-      claimOverlayEl.classList.toggle('hidden', !claiming);
-      boardWrapEl.style.pointerEvents = claiming ? 'auto' : 'auto';
-      if (!claiming) return;
-
-      const hint = document.createElement('div');
-      hint.className = 'claim-hint';
-      hint.textContent = 'Who found that set? Tap your glowing zone.';
-      claimOverlayEl.appendChild(hint);
-
-      players.forEach((player) => {
-        if (player.role === 'solo') return;
-        const button = document.createElement('button');
-        const isSide = player.role === 'left' || player.role === 'right';
-        button.type = 'button';
-        button.className = `claim-button ${isSide ? 'side' : 'corner'} ${player.role}`;
-        button.style.setProperty('--claim-color', player.color);
-        button.textContent = player.name;
-        button.addEventListener('click', () => claimPoint(player.id));
-        claimOverlayEl.appendChild(button);
-      });
-    }
-
-    function claimPoint(playerId) {
-      if (phase !== 'claiming') return;
-      const player = players.find((entry) => entry.id === playerId);
-      if (!player) return;
-      player.score += 1;
-      if (pendingGameOver) {
-        endGame();
-        return;
-      }
-      phase = 'playing';
-      showMessage(`${player.name} gets the point.`);
-      render();
-    }
-
-    function showScreen(screen) {
-      setupScreenEl.classList.toggle('hidden', screen !== 'setup');
-      gameScreenEl.classList.toggle('hidden', screen !== 'game');
-      endScreenEl.classList.toggle('hidden', screen !== 'end');
-    }
-
-    function endGame() {
-      phase = 'gameover';
-      if (timer) clearInterval(timer);
-
-      const best = Math.max(...players.map((p) => p.score));
-      const winners = players.filter((p) => p.score === best);
-      winnerTextEl.textContent = winners.length === 1
-        ? `${winners[0].name} wins with ${best} point${best === 1 ? '' : 's'}!`
-        : `It's a tie between ${winners.map((w) => w.name).join(' & ')} with ${best} points.`;
-
-      finalScoresEl.innerHTML = '';
-      players.forEach((player) => {
-        const row = document.createElement('div');
-        row.className = 'player-pill';
-        row.style.borderColor = player.color;
-        row.style.color = player.color;
-        row.textContent = `${player.name}: ${player.score}`;
-        finalScoresEl.appendChild(row);
-      });
-      showScreen('end');
-    }
-
-    function startRound() {
+    function resetGame() {
       deck = buildDeck();
       board = [];
       selected = [];
       setsFound = 0;
-      pendingGameOver = false;
-      phase = 'playing';
       startedAt = Date.now();
-
       deal(12);
       while (!findAnySet() && deck.length > 0) {
         deal(3);
       }
-
-      showMessage('Find a set. After each set, claim the point using your glowing zone.');
-      showScreen('game');
+      showMessage('Find a set: all same or all different for each trait.');
       render();
-
       if (timer) clearInterval(timer);
       timer = setInterval(() => {
         const sec = Math.floor((Date.now() - startedAt) / 1000);
@@ -682,34 +393,12 @@
       }, 1000);
     }
 
-    function startGame(count) {
-      playerCount = count;
-      players = createPlayers(count);
-      startRound();
-    }
-
-    document.querySelectorAll('[data-player-count]').forEach((btn) => {
-      btn.addEventListener('click', () => startGame(Number(btn.dataset.playerCount)));
-    });
-
     document.getElementById('dealBtn').addEventListener('click', addCards);
     document.getElementById('hintBtn').addEventListener('click', hint);
-    document.getElementById('newBtn').addEventListener('click', () => {
-      if (timer) clearInterval(timer);
-      showScreen('setup');
-      phase = 'setup';
-      timeEl.textContent = 'Time: 0s';
-    });
-
-    document.getElementById('playAgainBtn').addEventListener('click', () => {
-      if (timer) clearInterval(timer);
-      showScreen('setup');
-      phase = 'setup';
-      timeEl.textContent = 'Time: 0s';
-    });
-
+    document.getElementById('newBtn').addEventListener('click', resetGame);
     window.addEventListener('resize', updateBoardLayout);
-    showScreen('setup');
+
+    resetGame();
   </script>
 </body>
 </html>
