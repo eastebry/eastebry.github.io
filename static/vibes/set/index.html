@@ -55,6 +55,27 @@
       color: var(--muted);
     }
 
+    .players {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+    }
+
+    .player-chip {
+      border: 1px solid color-mix(in srgb, var(--pcolor) 60%, #334155);
+      color: #e2e8f0;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: color-mix(in srgb, var(--pcolor) 22%, #0f172a);
+      opacity: 0.75;
+    }
+
+    .player-chip.leading {
+      opacity: 1;
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--pcolor) 50%, transparent) inset;
+    }
+
     .controls {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -88,6 +109,14 @@
       align-content: center;
       justify-content: center;
       overflow: hidden;
+    }
+
+    .board-wrap {
+      position: relative;
+      min-height: 0;
+      display: grid;
+      overflow: hidden;
+      border-radius: 14px;
     }
 
     .card {
@@ -140,6 +169,120 @@
       color: var(--muted);
     }
 
+
+    [hidden] { display: none !important; }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #334155;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 5;
+    }
+
+    .panel {
+      background: rgba(31, 41, 55, 0.95);
+      border: 1px solid #475569;
+      border-radius: 16px;
+      padding: 16px;
+      width: min(100%, 500px);
+      text-align: center;
+    }
+
+    .panel h2 { margin: 0 0 10px; }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .claim-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .claim-layer.active {
+      pointer-events: auto;
+      background: rgba(15, 23, 42, 0.25);
+    }
+
+    .claim-btn {
+      position: absolute;
+      border-width: 3px;
+      border-color: color-mix(in srgb, var(--pcolor) 60%, #94a3b8);
+      background: color-mix(in srgb, var(--pcolor) 18%, rgba(15, 23, 42, 0.2));
+      box-shadow: 0 0 18px color-mix(in srgb, var(--pcolor) 40%, transparent);
+      color: #f8fafc;
+      font-size: 0.8rem;
+      min-height: 36px;
+      pointer-events: none;
+      opacity: 0.45;
+      transition: opacity 120ms ease;
+    }
+
+    .claim-layer.active .claim-btn {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    .claim-btn.side-left,
+    .claim-btn.side-right {
+      top: 12px;
+      bottom: 12px;
+      width: min(12vw, 76px);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      display: grid;
+      place-items: center;
+      padding: 6px;
+    }
+
+    .claim-btn.side-left {
+      left: 8px;
+      transform: rotate(180deg);
+    }
+
+    .claim-btn.side-right { right: 8px; }
+
+    .claim-btn.corner {
+      width: min(16vw, 94px);
+      height: min(16vw, 94px);
+      border-radius: 14px;
+      padding: 4px;
+      display: grid;
+      place-items: center;
+    }
+
+    .claim-btn.top-left { top: 8px; left: 8px; }
+    .claim-btn.top-right { top: 8px; right: 8px; }
+    .claim-btn.bottom-left { bottom: 8px; left: 8px; }
+    .claim-btn.bottom-right { bottom: 8px; right: 8px; }
+
+    .score-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid #475569;
+      border-left: 8px solid var(--pcolor);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.95rem;
+    }
+
   </style>
 </head>
 <body>
@@ -150,6 +293,7 @@
         <span id="cardsLeft">Deck: 81</span>
         <span id="time">Time: 0s</span>
       </div>
+      <div id="playersHUD" class="players" aria-live="polite"></div>
       <div class="controls">
         <button id="dealBtn" type="button">Add 3 cards</button>
         <button id="hintBtn" type="button">Hint</button>
@@ -157,7 +301,24 @@
       </div>
       <div id="message" class="msg" aria-live="polite"></div>
     </section>
-    <section id="board" class="grid" aria-label="Set board"></section>
+    <section class="board-wrap" aria-label="Set game area">
+      <section id="board" class="grid" aria-label="Set board"></section>
+      <div id="claimLayer" class="claim-layer" aria-live="polite"></div>
+      <div id="startOverlay" class="overlay">
+        <div class="panel">
+          <h2>Set multiplayer</h2>
+          <p>Select players:</p>
+          <div id="playerSelect" class="panel-grid"></div>
+        </div>
+      </div>
+      <div id="endOverlay" class="overlay" hidden>
+        <div class="panel">
+          <h2 id="winnerText">Game over</h2>
+          <div id="scoreList" class="score-list"></div>
+          <button id="playAgainBtn" type="button" style="margin-top:12px;">Play again</button>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -171,12 +332,31 @@
     let setsFound = 0;
     let startedAt = 0;
     let timer = null;
+    let playerCount = 1;
+    let scores = [0];
+    let awaitingClaim = false;
+    let gameActive = false;
+    let pendingGameOver = false;
+
+    const PLAYER_COLORS = ['#f97316', '#3b82f6', '#22c55e', '#e879f9'];
+    const PLAYER_ZONES = {
+      2: ['side-left', 'side-right'],
+      3: ['top-left', 'top-right', 'bottom-right'],
+      4: ['top-left', 'top-right', 'bottom-left', 'bottom-right']
+    };
 
     const boardEl = document.getElementById('board');
+    const claimLayerEl = document.getElementById('claimLayer');
+    const playersHUDEl = document.getElementById('playersHUD');
     const msgEl = document.getElementById('message');
     const setsEl = document.getElementById('setsFound');
     const cardsLeftEl = document.getElementById('cardsLeft');
     const timeEl = document.getElementById('time');
+    const startOverlayEl = document.getElementById('startOverlay');
+    const endOverlayEl = document.getElementById('endOverlay');
+    const scoreListEl = document.getElementById('scoreList');
+    const winnerTextEl = document.getElementById('winnerText');
+    const playerSelectEl = document.getElementById('playerSelect');
 
     function buildDeck() {
       const cards = [];
@@ -252,6 +432,31 @@
     function refreshHUD() {
       setsEl.textContent = `Sets: ${setsFound}`;
       cardsLeftEl.textContent = `Deck: ${deck.length}`;
+      playersHUDEl.innerHTML = '';
+      scores.forEach((score, idx) => {
+        const chip = document.createElement('span');
+        chip.className = 'player-chip';
+        chip.style.setProperty('--pcolor', PLAYER_COLORS[idx]);
+        chip.textContent = `P${idx + 1}: ${score}`;
+        if (score === Math.max(...scores)) chip.classList.add('leading');
+        playersHUDEl.appendChild(chip);
+      });
+    }
+
+    function renderClaimTargets() {
+      claimLayerEl.innerHTML = '';
+      if (playerCount === 1) return;
+      const zones = PLAYER_ZONES[playerCount] || [];
+      zones.forEach((zoneClass, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `claim-btn ${zoneClass} ${playerCount === 2 ? '' : 'corner'}`.trim();
+        btn.style.setProperty('--pcolor', PLAYER_COLORS[idx]);
+        btn.textContent = `P${idx + 1}`;
+        btn.addEventListener('click', () => awardPoint(idx));
+        claimLayerEl.appendChild(btn);
+      });
+      claimLayerEl.classList.toggle('active', awaitingClaim);
     }
 
     function render() {
@@ -264,8 +469,10 @@
         btn.innerHTML = cardMarkup(card);
         if (selected.includes(idx)) btn.classList.add('selected');
         btn.addEventListener('click', () => pickCard(idx));
+        btn.disabled = awaitingClaim || !gameActive;
         boardEl.appendChild(btn);
       });
+      renderClaimTargets();
       refreshHUD();
       requestAnimationFrame(updateBoardLayout);
     }
@@ -320,6 +527,7 @@
     }
 
     function pickCard(idx) {
+      if (awaitingClaim || !gameActive) return;
       const pos = selected.indexOf(idx);
       if (pos >= 0) {
         selected.splice(pos, 1);
@@ -332,6 +540,11 @@
       if (selected.length !== 3) return;
       const [a, b, c] = selected.map((i) => board[i]);
       if (isSet(a, b, c)) {
+        if (playerCount === 1) {
+          scores[0] += 1;
+        } else {
+          awaitingClaim = true;
+        }
         clearPickStyles('good');
         const toRemove = [...selected].sort((x, y) => y - x);
         toRemove.forEach((i) => board.splice(i, 1));
@@ -342,9 +555,14 @@
           deal(3);
         }
         if (!findAnySet() && deck.length === 0) {
-          showMessage('Game over — no sets left.');
+          if (playerCount === 1) {
+            finishGame();
+          } else {
+            pendingGameOver = true;
+            showMessage('Final set found — claim the last point.');
+          }
         } else {
-          showMessage('Nice set!');
+          showMessage(playerCount === 1 ? 'Nice set!' : 'Set found — tap your side/corner to claim point.');
         }
         render();
       } else {
@@ -354,7 +572,20 @@
       }
     }
 
+    function awardPoint(playerIdx) {
+      if (!awaitingClaim || !gameActive) return;
+      scores[playerIdx] += 1;
+      awaitingClaim = false;
+      showMessage(`Player ${playerIdx + 1} scores!`);
+      if (pendingGameOver) {
+        finishGame();
+        return;
+      }
+      render();
+    }
+
     function addCards() {
+      if (!gameActive || awaitingClaim) return;
       if (deck.length === 0) {
         showMessage('Deck is empty.');
         return;
@@ -364,6 +595,7 @@
     }
 
     function hint() {
+      if (!gameActive || awaitingClaim) return;
       const found = findAnySet();
       if (!found) {
         showMessage('No sets on board. Add cards.');
@@ -379,6 +611,11 @@
       board = [];
       selected = [];
       setsFound = 0;
+      scores = new Array(playerCount).fill(0);
+      awaitingClaim = false;
+      gameActive = true;
+      pendingGameOver = false;
+      endOverlayEl.hidden = true;
       startedAt = Date.now();
       deal(12);
       while (!findAnySet() && deck.length > 0) {
@@ -393,12 +630,60 @@
       }, 1000);
     }
 
+    function finishGame() {
+      gameActive = false;
+      awaitingClaim = false;
+      pendingGameOver = false;
+      const best = Math.max(...scores);
+      const winners = scores.map((v, i) => ({ v, i })).filter((x) => x.v === best);
+      winnerTextEl.textContent = winners.length === 1 ? `Winner: Player ${winners[0].i + 1}` : `Tie: ${winners.map((w) => `Player ${w.i + 1}`).join(', ')}`;
+      scoreListEl.innerHTML = '';
+      scores.forEach((score, idx) => {
+        const row = document.createElement('div');
+        row.className = 'score-row';
+        row.style.setProperty('--pcolor', PLAYER_COLORS[idx]);
+        row.innerHTML = `<span>Player ${idx + 1}</span><strong>${score}</strong>`;
+        scoreListEl.appendChild(row);
+      });
+      endOverlayEl.hidden = false;
+      showMessage('Game over — no sets left.');
+      if (timer) clearInterval(timer);
+      render();
+    }
+
+    function buildStartScreen() {
+      playerSelectEl.innerHTML = '';
+      [1, 2, 3, 4].forEach((count) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = `${count} player${count > 1 ? 's' : ''}`;
+        btn.addEventListener('click', () => {
+          playerCount = count;
+          startOverlayEl.hidden = true;
+          resetGame();
+        });
+        playerSelectEl.appendChild(btn);
+      });
+    }
+
     document.getElementById('dealBtn').addEventListener('click', addCards);
     document.getElementById('hintBtn').addEventListener('click', hint);
-    document.getElementById('newBtn').addEventListener('click', resetGame);
+    document.getElementById('newBtn').addEventListener('click', () => {
+      startOverlayEl.hidden = false;
+      endOverlayEl.hidden = true;
+      gameActive = false;
+      awaitingClaim = false;
+      pendingGameOver = false;
+      if (timer) clearInterval(timer);
+      showMessage('Select player count to begin.');
+      render();
+    });
+    document.getElementById('playAgainBtn').addEventListener('click', resetGame);
     window.addEventListener('resize', updateBoardLayout);
 
-    resetGame();
+    buildStartScreen();
+    showMessage('Select player count to begin.');
+    render();
   </script>
 </body>
 </html>
