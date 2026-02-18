@@ -3,6 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="/vibes/set/manifest.webmanifest" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/favicon-96x96.png" type="image/png" />
   <title>Set</title>
   <style>
     :root {
@@ -78,7 +85,7 @@
 
     .controls {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
     }
 
@@ -297,6 +304,7 @@
         <button id="dealBtn" type="button">Add 3 cards</button>
         <button id="hintBtn" type="button">Hint</button>
         <button id="newBtn" type="button">New game</button>
+        <button id="installBtn" type="button" hidden>Install app</button>
       </div>
       <div id="message" class="msg" aria-live="polite"></div>
     </section>
@@ -336,6 +344,7 @@
     let awaitingClaim = false;
     let gameActive = false;
     let pendingGameOver = false;
+    let deferredInstallPrompt = null;
 
     const PLAYER_COLORS = ['#f97316', '#3b82f6', '#22c55e', '#e879f9'];
     const PLAYER_ZONES = {
@@ -355,6 +364,29 @@
     const scoreListEl = document.getElementById('scoreList');
     const winnerTextEl = document.getElementById('winnerText');
     const playerSelectEl = document.getElementById('playerSelect');
+    const installBtnEl = document.getElementById('installBtn');
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          await navigator.serviceWorker.register('/vibes/set/sw.js');
+        } catch (err) {
+          console.error('Service worker registration failed', err);
+        }
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      installBtnEl.hidden = false;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      installBtnEl.hidden = true;
+      showMessage('App installed. You can now play offline.');
+    });
 
     function buildDeck() {
       const cards = [];
@@ -676,6 +708,19 @@
       render();
     });
     document.getElementById('playAgainBtn').addEventListener('click', resetGame);
+    installBtnEl.addEventListener('click', async () => {
+      if (!deferredInstallPrompt) {
+        showMessage('Use your browser menu to install this app.');
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      const choice = await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      installBtnEl.hidden = true;
+      if (choice.outcome === 'accepted') {
+        showMessage('Installing app...');
+      }
+    });
     window.addEventListener('resize', updateBoardLayout);
 
     buildStartScreen();

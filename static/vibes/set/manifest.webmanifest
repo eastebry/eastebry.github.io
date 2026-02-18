@@ -1,0 +1,22 @@
+{
+  "name": "Set Multiplayer",
+  "short_name": "Set",
+  "description": "Play Set in your browser, install on your phone, and keep playing offline.",
+  "start_url": "/vibes/set/",
+  "scope": "/vibes/set/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
