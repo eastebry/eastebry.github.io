@@ -208,11 +208,16 @@
       inset: 0;
       pointer-events: none;
       z-index: 4;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 120ms ease;
     }
 
     .claim-layer.active {
       pointer-events: auto;
       background: rgba(15, 23, 42, 0.25);
+      opacity: 1;
+      visibility: visible;
     }
 
     .claim-btn {
@@ -225,12 +230,6 @@
       font-size: 0.8rem;
       min-height: 36px;
       pointer-events: none;
-      opacity: 0.45;
-      transition: opacity 120ms ease;
-    }
-
-    .claim-layer.active .claim-btn {
-      pointer-events: auto;
       opacity: 1;
     }
 
@@ -238,7 +237,7 @@
     .claim-btn.side-right {
       top: 12px;
       bottom: 12px;
-      width: min(12vw, 76px);
+      width: min(18vw, 120px);
       writing-mode: vertical-rl;
       text-orientation: mixed;
       display: grid;
@@ -254,8 +253,8 @@
     .claim-btn.side-right { right: 8px; }
 
     .claim-btn.corner {
-      width: min(16vw, 94px);
-      height: min(16vw, 94px);
+      width: min(24vw, 160px);
+      height: min(24vw, 160px);
       border-radius: 14px;
       padding: 4px;
       display: grid;
@@ -289,7 +288,6 @@
   <main class="app">
     <section class="toolbar">
       <div class="stats">
-        <span id="setsFound">Sets: 0</span>
         <span id="cardsLeft">Deck: 81</span>
         <span id="time">Time: 0s</span>
       </div>
@@ -349,7 +347,6 @@
     const claimLayerEl = document.getElementById('claimLayer');
     const playersHUDEl = document.getElementById('playersHUD');
     const msgEl = document.getElementById('message');
-    const setsEl = document.getElementById('setsFound');
     const cardsLeftEl = document.getElementById('cardsLeft');
     const timeEl = document.getElementById('time');
     const startOverlayEl = document.getElementById('startOverlay');
@@ -430,7 +427,6 @@
     }
 
     function refreshHUD() {
-      setsEl.textContent = `Sets: ${setsFound}`;
       cardsLeftEl.textContent = `Deck: ${deck.length}`;
       playersHUDEl.innerHTML = '';
       scores.forEach((score, idx) => {
