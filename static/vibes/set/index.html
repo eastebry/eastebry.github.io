@@ -304,7 +304,7 @@
         <button id="dealBtn" type="button">Add 3 cards</button>
         <button id="hintBtn" type="button">Hint</button>
         <button id="newBtn" type="button">New game</button>
-        <button id="installBtn" type="button" hidden>Install app</button>
+        <button id="installBtn" type="button">Install app</button>
       </div>
       <div id="message" class="msg" aria-live="polite"></div>
     </section>
@@ -379,7 +379,7 @@
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault();
       deferredInstallPrompt = event;
-      installBtnEl.hidden = false;
+      installBtnEl.textContent = 'Install app';
     });
 
     window.addEventListener('appinstalled', () => {
@@ -716,12 +716,20 @@
       deferredInstallPrompt.prompt();
       const choice = await deferredInstallPrompt.userChoice;
       deferredInstallPrompt = null;
-      installBtnEl.hidden = true;
       if (choice.outcome === 'accepted') {
         showMessage('Installing app...');
+      } else {
+        showMessage('Install canceled. You can try again any time.');
       }
     });
     window.addEventListener('resize', updateBoardLayout);
+
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      installBtnEl.hidden = true;
+    } else {
+      installBtnEl.hidden = false;
+      installBtnEl.textContent = 'Install app';
+    }
 
     buildStartScreen();
     showMessage('Select player count to begin.');
