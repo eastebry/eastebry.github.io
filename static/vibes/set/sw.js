@@ -1,4 +1,4 @@
-const CACHE_NAME = 'set-pwa-v1';
+const CACHE_NAME = 'set-pwa-v2';
 const APP_SHELL = [
   '/vibes/set/',
   '/vibes/set/index.html',
@@ -25,6 +25,23 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') {
+    return;
+  }
+
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const cloned = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put('/vibes/set/index.html', cloned));
+          return response;
+        })
+        .catch(async () => {
+          const cached = await caches.match('/vibes/set/index.html');
+          if (cached) return cached;
+          return caches.match('/vibes/set/');
+        })
+    );
     return;
   }
 

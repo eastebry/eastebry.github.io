@@ -53,6 +53,28 @@
       gap: 8px;
     }
 
+    .toolbar-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toolbar-extras {
+      display: grid;
+      gap: 8px;
+    }
+
+    .menu-toggle {
+      width: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 6px;
+      font-size: 1.25rem;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+    }
+
     .stats {
       display: flex;
       justify-content: space-between;
@@ -67,6 +89,7 @@
       gap: 8px;
       flex-wrap: wrap;
       font-size: 0.85rem;
+      flex: 1;
     }
 
     .player-chip {
@@ -87,6 +110,18 @@
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
+    }
+
+    #installBtn {
+      border-color: #60a5fa;
+      background: color-mix(in srgb, #2563eb 32%, #0f172a);
+      color: #eff6ff;
+    }
+
+    @media (max-width: 520px) {
+      .controls {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     button {
@@ -295,18 +330,23 @@
 <body>
   <main class="app">
     <section class="toolbar">
-      <div class="stats">
-        <span id="cardsLeft">Deck: 81</span>
-        <span id="time">Time: 0s</span>
+      <div class="toolbar-top">
+        <button id="menuToggleBtn" class="menu-toggle" type="button" aria-expanded="false" aria-controls="toolbarExtras" aria-label="Expand menu">☰</button>
+        <div id="playersHUD" class="players" aria-live="polite"></div>
       </div>
-      <div id="playersHUD" class="players" aria-live="polite"></div>
-      <div class="controls">
-        <button id="dealBtn" type="button">Add 3 cards</button>
-        <button id="hintBtn" type="button">Hint</button>
-        <button id="newBtn" type="button">New game</button>
-        <button id="installBtn" type="button">Install app</button>
+      <div id="toolbarExtras" class="toolbar-extras" hidden>
+        <div class="stats">
+          <span id="cardsLeft">Deck: 81</span>
+          <span id="time">Time: 0s</span>
+        </div>
+        <div class="controls">
+          <button id="dealBtn" type="button">Add 3 cards</button>
+          <button id="hintBtn" type="button">Hint</button>
+          <button id="newBtn" type="button">New game</button>
+          <button id="installBtn" type="button">Install app</button>
+        </div>
+        <div id="message" class="msg" aria-live="polite"></div>
       </div>
-      <div id="message" class="msg" aria-live="polite"></div>
     </section>
     <section class="board-wrap" aria-label="Set game area">
       <section id="board" class="grid" aria-label="Set board"></section>
@@ -365,6 +405,18 @@
     const winnerTextEl = document.getElementById('winnerText');
     const playerSelectEl = document.getElementById('playerSelect');
     const installBtnEl = document.getElementById('installBtn');
+    const menuToggleBtnEl = document.getElementById('menuToggleBtn');
+    const toolbarExtrasEl = document.getElementById('toolbarExtras');
+
+    let toolbarCollapsed = true;
+
+    function setToolbarCollapsed(collapsed) {
+      toolbarCollapsed = collapsed;
+      toolbarExtrasEl.hidden = collapsed;
+      menuToggleBtnEl.setAttribute('aria-expanded', String(!collapsed));
+      menuToggleBtnEl.setAttribute('aria-label', collapsed ? 'Expand menu' : 'Collapse menu');
+      menuToggleBtnEl.textContent = collapsed ? '☰' : '✕';
+    }
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', async () => {
@@ -708,6 +760,9 @@
       render();
     });
     document.getElementById('playAgainBtn').addEventListener('click', resetGame);
+    menuToggleBtnEl.addEventListener('click', () => {
+      setToolbarCollapsed(!toolbarCollapsed);
+    });
     installBtnEl.addEventListener('click', async () => {
       if (!deferredInstallPrompt) {
         showMessage('Use your browser menu to install this app.');
@@ -732,6 +787,7 @@
     }
 
     buildStartScreen();
+    setToolbarCollapsed(true);
     showMessage('Select player count to begin.');
     render();
   </script>
