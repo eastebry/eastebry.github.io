@@ -1,10 +1,9 @@
-const CACHE_NAME = 'set-pwa-v2';
+const CACHE_NAME = 'set-pwa-v3';
 const APP_SHELL = [
   '/vibes/set/',
   '/vibes/set/index.html',
   '/vibes/set/manifest.webmanifest',
-  '/favicon.ico',
-  '/favicon-96x96.png'
+  '/vibes/set/icon.svg'
 ];
 
 self.addEventListener('install', (event) => {

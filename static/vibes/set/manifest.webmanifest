@@ -9,14 +9,10 @@
   "theme_color": "#0f172a",
   "icons": [
     {
-      "src": "/favicon-96x96.png",
-      "sizes": "96x96",
-      "type": "image/png"
-    },
-    {
-      "src": "/favicon.ico",
-      "sizes": "16x16 32x32 48x48",
-      "type": "image/x-icon"
+      "src": "/vibes/set/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }
