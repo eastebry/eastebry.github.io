@@ -83,11 +83,68 @@
 
     .stats {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       flex-wrap: wrap;
       gap: 8px;
       font-size: 0.95rem;
       color: var(--muted);
+    }
+
+    .install-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.8);
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      z-index: 20;
+    }
+
+    .install-modal {
+      width: min(100%, 560px);
+      background: rgba(31, 41, 55, 0.98);
+      border: 1px solid #475569;
+      border-radius: 16px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .install-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .install-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .platform-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .platform-tab[aria-pressed='true'] {
+      border-color: #60a5fa;
+      background: color-mix(in srgb, #2563eb 28%, #0f172a);
+    }
+
+    .install-help {
+      margin: 0;
+      color: #cbd5e1;
+      line-height: 1.45;
+      white-space: pre-line;
+    }
+
+    .install-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .players {
@@ -344,7 +401,6 @@
       <div id="toolbarExtras" class="toolbar-extras" hidden>
         <div class="stats">
           <span id="cardsLeft">Deck: 81</span>
-          <span id="time">Time: 0s</span>
         </div>
         <div class="controls">
           <button id="dealBtn" type="button">Add 3 cards</button>
@@ -374,6 +430,25 @@
       </div>
     </section>
   </main>
+
+  <div id="installOverlay" class="install-overlay" hidden>
+    <div class="install-modal" role="dialog" aria-modal="true" aria-labelledby="installHelpTitle">
+      <div class="install-header">
+        <h3 id="installHelpTitle">Install this app</h3>
+        <button id="installCloseBtn" type="button" aria-label="Close install help">✕</button>
+      </div>
+      <div class="platform-tabs" role="group" aria-label="Installation platform">
+        <button id="platformIosBtn" class="platform-tab" type="button" data-platform="ios" aria-pressed="true">iOS</button>
+        <button id="platformAndroidBtn" class="platform-tab" type="button" data-platform="android" aria-pressed="false">Android</button>
+        <button id="platformDesktopBtn" class="platform-tab" type="button" data-platform="desktop" aria-pressed="false">Desktop</button>
+      </div>
+      <p id="installHelpText" class="install-help"></p>
+      <div class="install-actions">
+        <button id="nativeInstallBtn" type="button" hidden>Install now</button>
+        <button id="installDoneBtn" type="button">Done</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const COLORS = ['#e11d48', '#16a34a', '#7c3aed'];
@@ -408,7 +483,6 @@
     const playersHUDEl = document.getElementById('playersHUD');
     const msgEl = document.getElementById('message');
     const cardsLeftEl = document.getElementById('cardsLeft');
-    const timeEl = document.getElementById('time');
     const startOverlayEl = document.getElementById('startOverlay');
     const endOverlayEl = document.getElementById('endOverlay');
     const scoreListEl = document.getElementById('scoreList');
@@ -418,6 +492,16 @@
     const menuToggleBtnEl = document.getElementById('menuToggleBtn');
     const toolbarExtrasEl = document.getElementById('toolbarExtras');
     const topStatusEl = document.getElementById('topStatus');
+    const installOverlayEl = document.getElementById('installOverlay');
+    const installHelpTextEl = document.getElementById('installHelpText');
+    const nativeInstallBtnEl = document.getElementById('nativeInstallBtn');
+    const platformTabEls = Array.from(document.querySelectorAll('.platform-tab'));
+
+    const INSTALL_HELP = {
+      ios: '1. Open this page in Safari.\n2. Tap the Share button (square with an up arrow).\n3. Tap “Add to Home Screen”, then tap “Add”.',
+      android: '1. Open this page in Chrome.\n2. Tap the three-dot menu.\n3. Tap “Install app” or “Add to Home screen”, then confirm.',
+      desktop: '1. Open this page in Chrome, Edge, or another supported browser.\n2. Click the install icon in the address bar (or open the browser menu).\n3. Choose “Install” to add the app.'
+    };
 
     let toolbarCollapsed = true;
 
@@ -450,8 +534,28 @@
 
     function updateTimeDisplays(seconds) {
       const label = `Time: ${seconds}s`;
-      timeEl.textContent = label;
       topStatusEl.textContent = label;
+    }
+
+    function setInstallPlatform(platform) {
+      platformTabEls.forEach((btn) => {
+        btn.setAttribute('aria-pressed', String(btn.dataset.platform === platform));
+      });
+      installHelpTextEl.textContent = INSTALL_HELP[platform] || INSTALL_HELP.desktop;
+    }
+
+    function updateNativeInstallButtonVisibility() {
+      nativeInstallBtnEl.hidden = !deferredInstallPrompt;
+    }
+
+    function openInstallOverlay() {
+      updateNativeInstallButtonVisibility();
+      setInstallPlatform('ios');
+      installOverlayEl.hidden = false;
+    }
+
+    function closeInstallOverlay() {
+      installOverlayEl.hidden = true;
     }
 
     function updateTopStatusVisibility() {
@@ -472,11 +576,13 @@
       event.preventDefault();
       deferredInstallPrompt = event;
       installBtnEl.textContent = 'Install app';
+      updateNativeInstallButtonVisibility();
     });
 
     window.addEventListener('appinstalled', () => {
       deferredInstallPrompt = null;
       installBtnEl.hidden = true;
+      closeInstallOverlay();
       showMessage('App installed. You can now play offline.');
     });
 
@@ -834,15 +940,30 @@
       setToolbarCollapsed(!toolbarCollapsed);
     });
     installBtnEl.addEventListener('click', async () => {
+      openInstallOverlay();
+    });
+    document.getElementById('installCloseBtn').addEventListener('click', closeInstallOverlay);
+    document.getElementById('installDoneBtn').addEventListener('click', closeInstallOverlay);
+    installOverlayEl.addEventListener('click', (event) => {
+      if (event.target === installOverlayEl) closeInstallOverlay();
+    });
+    platformTabEls.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        setInstallPlatform(btn.dataset.platform);
+      });
+    });
+    nativeInstallBtnEl.addEventListener('click', async () => {
       if (!deferredInstallPrompt) {
-        showMessage('Use your browser menu to install this app.');
+        showMessage('Install prompt not available right now. Use the browser menu steps above.');
         return;
       }
       deferredInstallPrompt.prompt();
       const choice = await deferredInstallPrompt.userChoice;
       deferredInstallPrompt = null;
+      updateNativeInstallButtonVisibility();
       if (choice.outcome === 'accepted') {
         showMessage('Installing app...');
+        closeInstallOverlay();
       } else {
         showMessage('Install canceled. You can try again any time.');
       }
@@ -855,6 +976,7 @@
       installBtnEl.hidden = false;
       installBtnEl.textContent = 'Install app';
     }
+    updateNativeInstallButtonVisibility();
 
     buildStartScreen();
     setToolbarCollapsed(true);
